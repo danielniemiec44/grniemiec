@@ -21,11 +21,6 @@ if (!$link) {
 <head>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 <style>
-.page {
-  width: 100vw;
-  height: 100vh
-}
-
 .navbar {
   background: #8a9d23
 }
@@ -46,20 +41,13 @@ if (!$link) {
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
-  <div class="collapse navbar-collapse" id="navbarColor02">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Strona Główna<span class="sr-only">(current)</span></a>
-      </li>
-    </ul>
-    
-  </div>
 </nav>
 
 
 
-
+<div class="container shadow p-3 bg-white rounded my-auto">
+  
+</div>
 
 
 
