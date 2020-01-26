@@ -5,14 +5,14 @@
 
 
 
-<?php $link = mysqli_connect("127.0.0.1", "root", "", "grniemiec");
+<?php $mysqli = new mysqli("127.0.0.1", "root", "", "grniemiec");
 
-if (!$link) {
-    echo "Error: Unable to connect to MySQL." . PHP_EOL;
-    echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
-    echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
-    exit;
-} else { ?>
+if ($mysqli->connect_errno) {
+  printf("Connect failed: %s\n", $mysqli->connect_error);
+  exit();
+} 
+
+?>
 
 
 
@@ -26,26 +26,18 @@ if (!$link) {
 }
 
 #main {
-  height: 100vh
+  //height: 100vh
 }
 
 #body {
+  /*
   background: url("1.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 100%;
-  align-items: center;
+  */
 }
 
-.modal-content {
-  background: rgb(255,255,255, 0.6);
-  transition: background 0.5s
-}
-
-.modal-content:hover {
-  background: rgb(255,255,255, 0.9);
-}
 </style>
 </head>
 <body>
@@ -55,52 +47,128 @@ if (!$link) {
     
 
 
-<div id="main" class="d-flex flex-column">
+
 <nav class="navbar navbar-expand-lg navbar-dark">
 <div class="navbar-header">
   <a class="navbar-brand" href="#">GRNIEMIEC Panel</a>
   </div>
-
-  <div class="navbar-collapse collapse w-100 order-3 dual-collapse2 text-white">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">Niezalogowany</li>
-    </div>
     
 </nav>
 
 
-<div id="body">
-<div class="modal-dialog">
-    <div class="modal-content">
+<div class="container-fluid" id="body">
+<div class="row m-4">
 
-        <div class="modal-body">
-        <div class="login-form">
-    <form action="javascript:logIn()" method="post">
-        <h3 class="text-center mb-4">Podaj klucz zabezpieczeń nr 1/2020</h3>       
-        <div class="form-group">
-            <input type="text" class="form-control" placeholder="Klucz zabezpieczeń" required="required" id="login">
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary btn-block" id="logInButton">Zaloguj się</button>
-        </div>        
-    </form>
+
+
+<div class="list-group col-3">
+  <a href="#" class="list-group-item list-group-item-action active">Zwierzęta</a>
 </div>
-             </div>
-         </div>
+
+
+    <div class="col-8 mx-auto">
+      
+    <div class="alert alert-info" role="alert">
+  <button class="btn btn-primary" type="submit">Dodaj</button>
+</div>
+
+
+    <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Kraj</th>
+      <th scope="col">Numer kolczyka</th>
+      <th scope="col">Data urodzenia</th>
+      <th scope="col">Płeć</th>
+      <th scope="col">Wycielenia</th>
+      <th scope="col">Uwagi</th>
+    </tr>
+  </thead>
+  <tbody>
+
+
+
+  <?php
+
+
+
+$result = $mysqli->query("select * from animals");
+
+while($row = $result->fetch_array(MYSQLI_NUM)){
+
+
+switch($row[4]){
+  case "B":
+    $sex = "Byczek";
+    $calvings = "Nie dotyczy";
+  break;
+  case "C":
+    $sex = "Cieliczka";
+    $result2 = $mysqli->query("select country,earring_number,birthdate,sex from animals where mother = '$row[2]'");
+    $items = "";
+    $numResults = mysqli_num_rows($result2);
+    while($row2 = $result2->fetch_array(MYSQLI_NUM)){
+      switch($row2[3]){
+        case "B":
+          $sex2 = "Byczek";
+        break;
+        case "C":
+          $sex2 = "Cieliczka";
+        break;
+        default:
+          $sex2 = "Nie określono";
+      }
+      $items .= '<a class="dropdown-item" href=""><h6>'.$row2[0].' '.$row2[1].'</h6><h6 class="text-muted">'.$row2[2].' - '.$sex2.'</h6></a><div class="dropdown-divider"></div>';
+    }
+    $calvings = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$numResults.'</button><div class="dropdown-menu">'.$items.'</div>';
+  break;
+  default:
+    $sex = "Nie określono";
+    $calvings = "Wymagane okreslenie plci";
+}
+
+
+if($row[5] == null){
+  $comments = "Brak";
+} else {
+  $comments = $row[5];
+}
+
+echo "<tr><td>$row[0]</td><td>$row[1]</td><td>$row[2]</td><td>$row[3]</td><td>$sex</td><td>$calvings</td><td>$comments</td></tr>";
+}
+
+
+
+$result->free();
+$mysqli->close();
+
+?>
+
+
+
+
+  </tbody>
+</table>
+
+
+
+
+
+
+
     </div>
+  </div>
 </div>
-</div>
-</div>
+
+
+
+
 
 
 <script>
     //$("input").on("focus",function(){$(".modal-content").css("background","rgb(255,255,255,1)")})
     //$("input").on("blur",function(){$(".modal-content").css("background","rgb(255,255,255,0.4)")})
-
-    function logIn(){
-      $("#logInButton").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logowanie...');
-      $("input").attr("disabled", true);
-    }
 
     </script>
 </body>
@@ -109,5 +177,4 @@ if (!$link) {
 
 
 
-    <?php } ?>
 </html>
